@@ -1,8 +1,75 @@
 <div class="overlay">
   <div class="modal">
     <div class="header">
-      <h3>Smart Task Scheduler</h3>
+      <h3>Schedule your meeting</h3>
+      <span class="close">×</span>
     </div>
-    
+
+    <div class="form">
+      <label>Name</label>
+      <input [(ngModel)]="name" placeholder="Enter your name" />
+
+      <label>Email</label>
+      <input [(ngModel)]="email" placeholder="Enter your email" />
+
+      <label>Type</label>
+      <div class="type-buttons">
+        <button [class.active]="type==='Event'" (click)="type='Event'">Event</button>
+        <button [class.active]="type==='Meet'" (click)="type='Meet'">Meet</button>
+        <button [class.active]="type==='Tasks'" (click)="type='Tasks'">Tasks</button>
+      </div>
+
+      <label>Task Description</label>
+      <input [(ngModel)]="taskTitle" placeholder="What is this for?" />
+
+      <label>Date</label>
+      <input type="date" [(ngModel)]="date" #dateInput (click)="dateInput.showPicker()" class="picker-input" />
+
+      <label>Choose time</label>
+      <input type="time" [(ngModel)]="time" #timeInput (click)="timeInput.showPicker()" class="picker-input" />
+
+      <div class="switch">
+        <span>Set Reminder</span>
+        <input type="checkbox" [(ngModel)]="reminderEnabled" />
+      </div>
+
+      <div class="switch">
+        <span>24 Hour Format</span>
+        <input type="checkbox" [(ngModel)]="is24Hour" />
+      </div>
+
+      <button class="confirm-btn" (click)="addTask()">Confirm</button>
+
+      <button class="ai-btn" (click)="generateReminder()" [disabled]="isLoading">
+        {{ isLoading ? 'Loading...' : 'Generate AI Reminder' }}
+      </button>
+
+      @if (aiReminder) {
+      <div class="ai-box">
+        <strong>AI Reminder:</strong>
+        <p class="ai-content" [innerHTML]="aiReminder"></p>
+      </div>
+      }
+    </div>
   </div>
 </div>
+
+@if (tasks.length > 0) {
+<div class="task-list">
+  <h3>Scheduled Tasks</h3>
+
+  @for (t of tasks; track t.id) {
+  <div class="task-card">
+    <div class="task-header">
+      <strong>{{ t.type }}</strong>
+      <span>{{ t.date }}</span>
+    </div>
+    <p><strong>Task:</strong> {{ t.taskTitle }}</p>
+    <p><strong>Name:</strong> {{ t.name }}</p>
+    <p><strong>Time:</strong> {{ t.time }}</p>
+  </div>
+  } @empty {
+  <p>No tasks scheduled yet.</p>
+  }
+</div>
+}
